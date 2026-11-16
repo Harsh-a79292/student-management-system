@@ -2,10 +2,10 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine, get_db
 from app import models
-from fastapi.middleware.cors import CORSMiddleware
 
 from pwdlib import PasswordHash
 
@@ -30,7 +30,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(
 )
 
 if not SECRET_KEY:
-    raise RuntimeError("SECRET_KEY is missing from .env")
+    raise RuntimeError("SECRET_KEY is missing")
 
 
 # =====================================
@@ -148,9 +148,6 @@ def admin_required(
 # =====================================
 # FASTAPI APPLICATION
 # =====================================
-# =====================================
-# FASTAPI APPLICATION
-# =====================================
 
 app = FastAPI(
     title="My FastAPI Application",
@@ -167,7 +164,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "https://student-management-system-1-lvi6.onrender.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -175,7 +173,12 @@ app.add_middleware(
 )
 
 
+# =====================================
+# DATABASE TABLE CREATION
+# =====================================
+
 Base.metadata.create_all(bind=engine)
+
 
 # =====================================
 # PYDANTIC SCHEMAS
@@ -213,7 +216,9 @@ class UserLogin(BaseModel):
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to My FastAPI Application!"}
+    return {
+        "message": "Welcome to My FastAPI Application!"
+    }
 
 
 # =====================================
