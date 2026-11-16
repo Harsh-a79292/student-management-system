@@ -1,14 +1,10 @@
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: "http://127.0.0.1:8000",
-  headers: {
-    "Content-Type": "application/json",
-  },
+const api = axios.create({
+  baseURL: "https://student-management-system-pvcj.onrender.com",
 });
 
-// Automatically attach JWT token to requests
-API.interceptors.request.use((config) => {
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
   if (token) {
@@ -18,4 +14,4 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-export default API;
+export default api;
